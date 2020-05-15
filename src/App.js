@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import "./App.css"
 
-function App() {
+const App = () => {
+  const [characters, setCharacters] = useState([])
+
+  const getCharacters = (amount) => {
+    const requests = []
+
+    for (let i = 1; i < amount; i++) {
+      requests.push(axios.get(`https://swapi.dev/api/people/${i}`))
+    }
+    Promise.all(requests)
+      .then((response) => {
+        setCharacters(response)
+      })
+      .catch((e) => console.log(e))
+  }
+
+  useEffect(() => {
+    getCharacters(15)
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='starWarsApp'>
+      <h1>Star Wars Characters</h1>
+      {characters.map((character, i) => (
+        <div key={`${character}-${i}`}>{character.data.name}</div>
+      ))}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
